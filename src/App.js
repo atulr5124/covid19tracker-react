@@ -2,13 +2,27 @@ import React, { useState, useEffect } from 'react';
 import {
   MenuItem,
   FormControl,
-  Select
+  Select,
+  Card,
+  CardContent
 } from '@material-ui/core'
-import './App.css';
+import './App.css'
+import InfoBox from './InfoBox'
+import Map from './Map';
 
 function App() {
 
   const [countries, setCountries] = useState([])
+  const [country, setCountry] = useState('worldwide')
+  const [countryInfo, setCountryInfo] = useState({})
+
+  useEffect(() => {
+    fetch('https://disease.sh/v3/covid-19/all')
+      .then(response => response.json())
+      .then((data) => {
+        setCountryInfo(data)
+      })
+  }, [])
 
   useEffect(() => {
     const getCountriesData = async () => {
@@ -25,29 +39,55 @@ function App() {
     getCountriesData()
   }, [])
 
+  const onCountryChange = async (e) => {
+    const countryCode = e.target.value
+    setCountry(countryCode)
+
+    const url = countryCode === 'worldwide'
+      ? 'https://disease.sh/v3/covid-19/all'
+      : `https://disease.sh/v3/covid-19/countries/${countryCode}`
+
+    await fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        setCountry(countryCode)
+        setCountryInfo(data)
+      })
+  }
+
+  console.log('Country Info ---->', countryInfo)
+
   return (
     <div className="app">
-      <div className="app_header">
-        <h1>COVID 19 TRACKER</h1>
-        <FormControl className="app_dropdown">
-          <Select variant="outlined" value="abc">
-            {/* Loop through all the countries */}
-            {
-              countries.map(country => (
-                <MenuItem key={country.value} value={country.value}>{country.name}</MenuItem>
-              ))
-            }
-          </Select>
-        </FormControl>
+      <div className="app__left">
+        <div className="app_header">
+          <h1>COVID 19 TRACKER</h1>
+          <FormControl className="app_dropdown">
+            <Select variant="outlined" value={country} onChange={onCountryChange}>
+              <MenuItem value="worldwide">Worldwide</MenuItem>
+              {/* Loop through all the countries */}
+              {
+                countries.map(country => (
+                  <MenuItem key={country.value} value={country.value}>{country.name}</MenuItem>
+                ))
+              }
+            </Select>
+          </FormControl>
+        </div>
+
+        <div className="app__stats">
+          <InfoBox title="Coronavirus Cases" cases={countryInfo.todayCases} total={countryInfo.cases} />
+          <InfoBox title="Recovered" cases={countryInfo.todayRecovered} total={countryInfo.recovered} />
+          <InfoBox title="Deceased" cases={countryInfo.todayDeaths} total={countryInfo.deaths} />
+        </div>
+        <Map />
       </div>
-      {/* Header */}
-      {/* Title + Select input dropdown field */}
-      {/* Info Box */}
-      {/* Info Box */}
-      {/* Info Box */}
-      {/* Table of cases and countries */}
-      {/* Graph */}
-      {/* Map */}
+      <Card className="app__right">
+        <CardContent>
+          <h3>Live Cases by Country</h3>
+          <h3>Worldwide New Cases</h3>
+        </CardContent>
+      </Card>
     </div>
   );
 }
