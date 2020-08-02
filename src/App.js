@@ -8,13 +8,16 @@ import {
 } from '@material-ui/core'
 import './App.css'
 import InfoBox from './InfoBox'
-import Map from './Map';
+import Map from './Map'
+import Table from './Table'
+import { sortData } from './util'
 
 function App() {
 
   const [countries, setCountries] = useState([])
   const [country, setCountry] = useState('worldwide')
   const [countryInfo, setCountryInfo] = useState({})
+  const [tableData, setTableData] = useState([])
 
   useEffect(() => {
     fetch('https://disease.sh/v3/covid-19/all')
@@ -33,6 +36,7 @@ function App() {
             name: country.country,
             value: country.countryInfo.iso2
           }))
+          setTableData(data)
           setCountries(countries)
         })
     }
@@ -54,8 +58,6 @@ function App() {
         setCountryInfo(data)
       })
   }
-
-  console.log('Country Info ---->', countryInfo)
 
   return (
     <div className="app">
@@ -85,6 +87,7 @@ function App() {
       <Card className="app__right">
         <CardContent>
           <h3>Live Cases by Country</h3>
+          <Table countries={tableData} />
           <h3>Worldwide New Cases</h3>
         </CardContent>
       </Card>
