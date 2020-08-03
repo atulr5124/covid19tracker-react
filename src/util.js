@@ -4,7 +4,7 @@ export const sortData = (data) => {
         if(a.cases > b.cases) {
             return -1 
         } else {
-            return -1
+            return 1
         }
     })
     return sortedData
