@@ -46,6 +46,12 @@ const options = {
     }
 }
 
+const casesTypeColors = {
+    cases: "#cc1034",
+    recovered: "#7dd71d",
+    deaths: "#fb4443"
+}
+
 function LineGraph({casesType = 'cases', ...props}) {
 
     const [data, setData] = useState({})
@@ -86,8 +92,8 @@ function LineGraph({casesType = 'cases', ...props}) {
                     options={options}
                     data={{
                         datasets: [{
-                            backgroundColor: "rgba(204,16,52,0.5)",
-                            borderColor: "#CC1034",
+                            backgroundColor: casesTypeColors[casesType],
+                            borderColor: casesTypeColors[casesType],
                             data: data
                         }]
                     }} />

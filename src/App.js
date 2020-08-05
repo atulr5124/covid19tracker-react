@@ -13,6 +13,7 @@ import Table from './Table'
 import { sortData, prettyPrintStat } from './util'
 import LineGraph from './LineGraph'
 import 'leaflet/dist/leaflet.css'
+import numeral from 'numeral'
 
 function App() {
 
@@ -102,6 +103,10 @@ function App() {
             title="Recovered" 
             cases={prettyPrintStat(countryInfo.todayRecovered)} 
             total={prettyPrintStat(countryInfo.recovered)} />
+          <InfoBox
+            active={casesType === 'active'}
+            title="Active"
+            cases={numeral(countryInfo.active).format("0,0a")} />
           <InfoBox 
             isRed
             active={casesType === 'deaths'}
